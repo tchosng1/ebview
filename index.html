@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Make buttons and controls responsive */
+        .controls, .url-section {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button, input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            width: auto;
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        iframe {
+            width: 90vw;
+            height: 70vh;
+            border: 1px solid black;
+            margin-top: 20px;
+        }
+
+        button#toggleUrl {
+            font-size: 14px;
+            padding: 6px 12px;
+            max-width: 150px;
+        }
+
+        #urlInputContainer {
+            display: none; /* Hidden by default, will be shown when expanded */
+        }
+
+        /* Media queries for smaller screens */
+        @media (max-width: 768px) {
+            button, input {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            iframe {
+                width: 95vw;
+                height: 65vh;
+            }
+
+            input[type="text"] {
+                width: 80vw;
+            }
+
+            button#toggleUrl {
+                padding: 5px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            button, input {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            iframe {
+                width: 100vw;
+                height: 60vh;
+            }
+
+            input[type="text"] {
+                width: 90vw;
+            }
+
+            button#toggleUrl {
+                padding: 4px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button id="prevPage">前</button>
+        <button id="nextPage">后</button>
+        <button id="toggleUrl">切换</button>
+    </div>
+
+    <div id="urlInputContainer" class="url-section">
+        <input type="text" id="urlInput" placeholder="Enter eBook URL here..." />
+        <button id="loadUrl">加载</button>
+    </div>
+
+    <iframe id="innerBrowser" sandbox="allow-same-origin allow-forms"></iframe>
+
+    <script>
+        const iframe = document.getElementById('innerBrowser');
+        const loadButton = document.getElementById('loadUrl');
+        const prevButton = document.getElementById('prevPage');
+        const nextButton = document.getElementById('nextPage');
+        const toggleUrlButton = document.getElementById('toggleUrl');
+        const urlInputContainer = document.getElementById('urlInputContainer');
+        const urlInput = document.getElementById('urlInput');
+
+        let currentUrl = "";  // Stores the current URL with page number
+        let pageNumberIndex = -1;  // Stores the index of the page number in the URL
+
+        // Function to load a URL into the iframe
+        loadButton.addEventListener('click', () => {
+            currentUrl = urlInput.value.trim();
+
+            if (currentUrl) {
+                iframe.src = currentUrl;
+
+                // Identify the page number in the URL
+                const matches = currentUrl.match(/(\d+)\.html$/);
+                if (matches) {
+                    pageNumberIndex = currentUrl.lastIndexOf(matches[1]);
+                } else {
+                    pageNumberIndex = -1;  // Reset if no number is found
+                }
+            }
+        });
+
+        // Function to change the page by offset (+1 for next, -1 for previous)
+        function changePage(offset) {
+            if (currentUrl && pageNumberIndex !== -1) {
+                // Extract the page number from the URL
+                let pageNumber = parseInt(currentUrl.substring(pageNumberIndex).match(/\d+/)[0]);
+
+                // Calculate the new page number
+                let newPageNumber = pageNumber + offset;
+
+                if (newPageNumber > 0) {
+                    // Replace the old page number with the new one in the URL
+                    currentUrl = currentUrl.substring(0, pageNumberIndex) + newPageNumber + '.html';
+                    iframe.src = currentUrl;
+                    urlInput.value = currentUrl;  // Update the input field with the new URL
+                }
+            }
+        }
+
+        // Event listeners for Previous and Next buttons
+        prevButton.addEventListener('click', () => changePage(-1));
+        nextButton.addEventListener('click', () => changePage(1));
+
+        // Toggle the visibility of the URL input container
+        toggleUrlButton.addEventListener('click', () => {
+            if (urlInputContainer.style.display === "none") {
+                urlInputContainer.style.display = "flex"; // Show the URL input section
+            } else {
+                urlInputContainer.style.display = "none"; // Hide the URL input section
+            }
+        });
+    </script>
+
+</body>
+</html>
