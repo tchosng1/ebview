@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -133,10 +133,9 @@
         let currentUrl = "";  // Stores the current URL with page number
         let pageNumberIndex = -1;  // Stores the index of the page number in the URL
 
-        // Function to load a URL into the iframe
-        loadButton.addEventListener('click', () => {
-            currentUrl = urlInput.value.trim();
-
+        // Function to load a URL into the iframe and update the address bar
+        function loadUrl(url) {
+            currentUrl = url.trim();
             if (currentUrl) {
                 iframe.src = currentUrl;
 
@@ -147,7 +146,15 @@
                 } else {
                     pageNumberIndex = -1;  // Reset if no number is found
                 }
+
+                // Update the browser's address bar with the current URL (so it can be bookmarked)
+                history.pushState(null, '', `?url=${encodeURIComponent(currentUrl)}`);
             }
+        }
+
+        // Load a URL when clicking the '加载' button
+        loadButton.addEventListener('click', () => {
+            loadUrl(urlInput.value);
         });
 
         // Function to change the page by offset (+1 for next, -1 for previous)
@@ -164,6 +171,9 @@
                     currentUrl = currentUrl.substring(0, pageNumberIndex) + newPageNumber + '.html';
                     iframe.src = currentUrl;
                     urlInput.value = currentUrl;  // Update the input field with the new URL
+
+                    // Update the browser's address bar with the current URL
+                    history.pushState(null, '', `?url=${encodeURIComponent(currentUrl)}`);
                 }
             }
         }
@@ -180,6 +190,14 @@
                 urlInputContainer.style.display = "none"; // Hide the URL input section
             }
         });
+
+        // If a URL is passed as a query parameter, load it
+        const queryParams = new URLSearchParams(window.location.search);
+        const urlFromQuery = queryParams.get('url');
+        if (urlFromQuery) {
+            loadUrl(decodeURIComponent(urlFromQuery));
+            urlInput.value = decodeURIComponent(urlFromQuery); // Update the input field
+        }
     </script>
 
 </body>
