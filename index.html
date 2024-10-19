@@ -213,6 +213,31 @@
             loadUrl(decodeURIComponent(urlFromQuery));
             urlInput.value = decodeURIComponent(urlFromQuery); // Update the input field
         }
+
+        // Swipe detection for navigating pages
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function handleGesture() {
+            if (touchEndX < touchStartX) {
+                // Swipe left: Go to next page
+                changePage(1);
+            }
+            if (touchEndX > touchStartX) {
+                // Swipe right: Go to previous page
+                changePage(-1);
+            }
+        }
+
+        // Add touch event listeners
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleGesture();
+        });
     </script>
 
 </body>
