@@ -24,11 +24,11 @@
             align-items: center;
         }
 
-        .controls, .url-section {
-            margin: 10px 0;
+        .controls {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
         }
 
         button, input {
@@ -62,6 +62,16 @@
 
         #urlInputContainer {
             display: none; /* Hidden by default, will be shown when expanded */
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Position buttons at the bottom */
+        .footer {
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
         }
 
         /* Media queries for smaller screens */
@@ -106,19 +116,24 @@
 </head>
 <body>
 
-    <div class="controls">
-        <button id="prevPage">前</button>
-        <button id="nextPage">后</button>
-        <button id="toggleUrl">切换</button>
-    </div>
-
+    <!-- URL Input Section (stays at the top) -->
     <div id="urlInputContainer" class="url-section">
         <input type="text" id="urlInput" placeholder="在此输入电子书网址..." />
         <button id="loadUrl">加载</button>
     </div>
 
+    <!-- Main content area with iframe -->
     <div class="content">
         <iframe id="innerBrowser" sandbox="allow-same-origin allow-forms"></iframe>
+    </div>
+
+    <!-- Footer controls (buttons at the bottom) -->
+    <div class="footer">
+        <div class="controls">
+            <button id="prevPage">前</button>
+            <button id="nextPage">后</button>
+            <button id="toggleUrl">切换</button>
+        </div>
     </div>
 
     <script>
