@@ -1,2 +1,2 @@
 # ebook viewer
-A ad free ebook viewer
+An ad free ebook viewer
